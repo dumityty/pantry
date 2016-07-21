@@ -1,0 +1,30 @@
+<div ng-if="!pantry">
+  Loading results...
+</div>
+
+<div ng-if="pantry.Items.length > 0">
+  <table class="table table-striped" >
+    <thead>
+      <th>Item</th>
+      <th>Stock</th>
+    </thead>
+     <tbody>
+      <tr ng-repeat="pantry_item in pantry.Items">
+        <td>{{ pantry_item.item }}</td><td>{{ pantry_item.stock }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<form ng-submit="newItem()">
+  <label>Item:</label>
+  <input type="text" ng-model="itemname" placeholder="Item" ng-required/>
+  <label>Stock:</label>
+  <input type="text" ng-model="itemstock" placeholder="Stock" ng-required/>
+  <br/>
+  <button class="btn" type="submit">Save</button>
+</form>
+
+<div ng-if="pantry.Items.length == 0">
+  No items in the pantry.
+</div>
