@@ -2,15 +2,31 @@
   Loading results...
 </div>
 
-<div ng-if="pantry.Items.length > 0">
+<div ng-if="pantry.length > 0">
   <table class="table table-striped" >
     <thead>
       <th>Item</th>
       <th>Stock</th>
+      <th>Actions</th>
     </thead>
      <tbody>
-      <tr ng-repeat="pantry_item in pantry.Items">
-        <td>{{ pantry_item.item }}</td><td>{{ pantry_item.stock }}</td>
+      <tr ng-repeat="pantry_item in pantry">
+        <td editable-text="pantry_item.item" e-name="item" e-form="rowform">{{ pantry_item.item }}</td>
+        <td>{{ pantry_item.stock }}</td>
+        <td>
+          <form editable-form name="rowform" onbeforesave="saveItem($data)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == item">
+            <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+              save
+            </button>
+            <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+              cancel
+            </button>
+          </form>
+          <div class="buttons" ng-show="!rowform.$visible">
+            <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
+            <button class="btn btn-danger" ng-click="removeItem($index)">del</button>
+          </div>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -25,6 +41,6 @@
   <button class="btn" type="submit">Save</button>
 </form>
 
-<div ng-if="pantry.Items.length == 0">
+<div ng-if="pantry.length == 0">
   No items in the pantry.
 </div>

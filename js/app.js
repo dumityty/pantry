@@ -2,7 +2,7 @@
 
 angular.module('pantryApp', [])
   .controller('PantryController', function($scope, $http){
-    var apiurl = "URL";
+    var apiurl = "";
 
     var req = {
       method: 'POST',
@@ -15,14 +15,25 @@ angular.module('pantryApp', [])
       }
     }
 
-    fetchPantry(req);
+    // fetchPantry(req);
+
+    $scope.pantry = [
+        {
+          "item": "name1",
+          "stock": 1
+        },
+        {
+          "item": "name2",
+          "stock": 2
+        }
+      ];
+
+    console.log($scope.pantry);
 
     function fetchPantry(req){
       $http(req).then(function(response){
-        // maybe be more specific and get only the Items from the data.
-        // don't need the whole data response.
-        $scope.pantry = response.data;
         console.log(response);
+        $scope.pantry = response.data.Items;
 
       });
     }
@@ -52,6 +63,11 @@ angular.module('pantryApp', [])
         // add the new item directly to the pantry scope (to save api calls)
         // or call fetchPantry again...
       });
-
     }
+
+
+
+
+
+
   });
