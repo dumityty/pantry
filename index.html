@@ -2,22 +2,22 @@
 <html lang="en" ng-app="pantryApp" ng-controller="PantryController">
   <head>
     <title ng-bind="Pantry"></title>
+
     <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="lib/angular-xeditable-0.2.0/css/xeditable.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
   </head>
 
   <body>
-      <div class="navbar">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="#"><b>Pantry</b></a>
-          </div>
-        </div>
+    <div class="navbar">
+      <div class="text-center">
+        <a class="navbar-brand" href="" ng-click="reload()">Pantry <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
       </div>
+    </div>
 
     <div class="container-fluid">
       <div class="row">

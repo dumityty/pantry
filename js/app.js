@@ -130,7 +130,9 @@ angular.module('pantryApp', ['xeditable'])
     }
 
 
-
+    $scope.reload = function() {
+      location.reload();
+    }
 
 
   });

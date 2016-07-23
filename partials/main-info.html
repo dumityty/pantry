@@ -3,37 +3,39 @@
 </div>
 
 <div ng-if="pantry.length > 0">
-  <table class="table table-striped" >
-    <thead>
-      <th>Item</th>
-      <th>Stock</th>
-      <th>Actions</th>
-    </thead>
-     <tbody>
-      <tr ng-repeat="pantry_item in pantry">
-        <td>
-          <span editable-text="pantry_item.item" e-name="item" e-form="rowform">{{ pantry_item.item }}</span>
-        </td>
-        <td>
-          <span editable-text="pantry_item.stock" e-name="stock" e-form="rowform">{{ pantry_item.stock }}</span>
-        </td>
-        <td>
-          <form editable-form name="rowform" onbeforesave="saveItem(pantry_item, $data)" ng-show="rowform.$visible" class="form-buttons form-inline">
-            <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
-              save
-            </button>
-            <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
-              cancel
-            </button>
-          </form>
-          <div class="buttons" ng-show="!rowform.$visible">
-            <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
-            <button class="btn btn-danger" ng-click="removeItem(pantry_item.item)">del</button>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table table-striped" >
+      <thead>
+        <th>Item</th>
+        <th>Stock</th>
+        <th>Actions</th>
+      </thead>
+       <tbody>
+        <tr ng-repeat="pantry_item in pantry">
+          <td>
+            <span editable-text="pantry_item.item" e-name="item" e-form="rowform">{{ pantry_item.item }}</span>
+          </td>
+          <td>
+            <span editable-text="pantry_item.stock" e-name="stock" e-form="rowform">{{ pantry_item.stock }}</span>
+          </td>
+          <td>
+            <form editable-form name="rowform" onbeforesave="saveItem(pantry_item, $data)" ng-show="rowform.$visible" class="form-buttons form-inline">
+              <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+                save
+              </button>
+              <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                cancel
+              </button>
+            </form>
+            <div class="buttons" ng-show="!rowform.$visible">
+              <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
+              <button class="btn btn-danger" ng-click="removeItem(pantry_item.item)">del</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <form class="form-inline" ng-submit="newItem()">

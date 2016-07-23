@@ -12,4 +12,8 @@
 
 .navbar-brand {
   color: #FA6A64;
+  float: none;
+  display: block;
 }
+
+
