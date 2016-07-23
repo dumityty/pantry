@@ -11,21 +11,29 @@
   </head>
 
   <body>
-    <div class="container-fluid outerdiv">
-      <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar">
         <div class="container-fluid">
           <div class="navbar-header">
             <a class="navbar-brand" href="#"><b>Pantry</b></a>
           </div>
         </div>
-      </nav>
+      </div>
 
-      <noscript>
-        <div class="nojs">Javascript is either disabled or not supported in your browser. Please enable it or use a Javascript enabled browser.</div>
-      </noscript>
-
-      <div class="animated zoomInRight">
-        <div id="main-info" ng-include="'partials/main-info.html'" class="col-md-8"></div>
+    <div class="container-fluid">
+      <div class="row">
+        <noscript>
+          <div class="nojs">Javascript is either disabled or not supported in your browser. Please enable it or use a Javascript enabled browser.</div>
+        </noscript>
+        <div class="col-sm-3">
+        </div>
+        <div class="col-sm-6">
+          <!-- <div class="animated zoomInRight"> -->
+            <div id="main-info" ng-include="'partials/main-info.html'" class=""></div>
+          <!-- </div> -->
+            </div>
+        </div>
+        <div class="col-sm-3">
+        </div>
       </div>
     </div>
 

@@ -11,10 +11,14 @@
     </thead>
      <tbody>
       <tr ng-repeat="pantry_item in pantry">
-        <td editable-text="pantry_item.item" e-name="item" e-form="rowform">{{ pantry_item.item }}</td>
-        <td>{{ pantry_item.stock }}</td>
         <td>
-          <form editable-form name="rowform" onbeforesave="saveItem($data)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == item">
+          <span editable-text="pantry_item.item" e-name="item" e-form="rowform">{{ pantry_item.item }}</span>
+        </td>
+        <td>
+          <span editable-text="pantry_item.stock" e-name="stock" e-form="rowform">{{ pantry_item.stock }}</span>
+        </td>
+        <td>
+          <form editable-form name="rowform" onbeforesave="saveItem(pantry_item, $data)" ng-show="rowform.$visible" class="form-buttons form-inline">
             <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
               save
             </button>
@@ -24,7 +28,7 @@
           </form>
           <div class="buttons" ng-show="!rowform.$visible">
             <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
-            <button class="btn btn-danger" ng-click="removeItem($index)">del</button>
+            <button class="btn btn-danger" ng-click="removeItem(pantry_item.item)">del</button>
           </div>
         </td>
       </tr>
@@ -32,12 +36,15 @@
   </table>
 </div>
 
-<form ng-submit="newItem()">
-  <label>Item:</label>
-  <input type="text" ng-model="itemname" placeholder="Item" ng-required/>
-  <label>Stock:</label>
-  <input type="text" ng-model="itemstock" placeholder="Stock" ng-required/>
-  <br/>
+<form class="form-inline" ng-submit="newItem()">
+  <div class="form-group">
+    <label for="item" >Item:</label>
+    <input type="text" class="form-control" size="20" id="item" ng-model="itemname" placeholder="Item" ng-required required/>
+  </div>
+  <div class="form-group">
+    <label for="stock" >Stock:</label>
+    <input type="text" class="form-control" size="5" ng-model="itemstock" id="stock" placeholder="Stock" ng-required/>
+  </div>
   <button class="btn" type="submit">Save</button>
 </form>
 
