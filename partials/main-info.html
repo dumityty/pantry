@@ -3,6 +3,18 @@
 </div>
 
 <div ng-if="pantry.length > 0">
+
+  <form>
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+
+        <input type="text" class="form-control" placeholder="search" ng-model="searchPantry">
+
+      </div>
+    </div>
+  </form>
+
   <div class="table-responsive">
     <table class="table table-striped" >
       <thead>
@@ -11,7 +23,7 @@
         <th>Actions</th>
       </thead>
        <tbody>
-        <tr ng-repeat="pantry_item in pantry">
+        <tr ng-repeat="pantry_item in pantry | filter:searchPantry">
           <td>
             <span editable-text="pantry_item.item" e-name="item" e-form="rowform">{{ pantry_item.item }}</span>
           </td>
@@ -28,8 +40,8 @@
               </button>
             </form>
             <div class="buttons" ng-show="!rowform.$visible">
-              <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
-              <button class="btn btn-danger" ng-click="removeItem(pantry_item.item, $index)">del</button>
+              <button class="btn btn-primary" ng-click="rowform.$show()"><span class="glyphicon glyphicon-pencil"></span></button>
+              <button class="btn btn-danger" ng-click="removeItem(pantry_item.item, $index)"><span class="glyphicon glyphicon-trash"></span></button>
             </div>
           </td>
         </tr>
