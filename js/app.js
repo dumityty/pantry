@@ -1,50 +1,61 @@
 'use strict';
 
-angular.module('pantryApp', ['xeditable'])
-  .controller('PantryController', function($scope, $http){
+angular.module('pantryApp', ['xeditable','ngCookies'])
+  .controller('PantryController', function($scope, $http, $cookies){
     var apiurl = "";
 
-    var req = {
-      method: 'POST',
-      url: apiurl,
-      data: {"operation": "list",
-        "tableName": "Pantry",
-        "payload": {
-          "TableName": "Pantry"
-        }
+    // todo:
+    // save pantry somehow locally - in cookies - DONE
+    // only refresh it on click of a refresh button - call function to refresh cookie
+    //
+    // any functions below should also refresh the $scope.pantry and update the view.
+    //
+    // also empty the form add after saving
+
+    listPantry();
+
+    // Retrieve and list the Pantry items.
+    function listPantry() {
+      $scope.pantry = $cookies.getObject('pantry');
+      console.log($scope.pantry);
+
+      if (typeof $scope.pantry === "undefined") {
+        fetchPantry();
+        // $scope.pantry = [
+        //   {
+        //     "item": "name1",
+        //     "stock": 1
+        //   },
+        //   {
+        //     "item": "name2",
+        //     "stock": 2
+        //   }
+        // ];
       }
     }
 
-    fetchPantry(req);
-
-    // todo: save pantry somehow locally - in cookies, etc
-    // and only refresh it on click of a refresh button
-    // any functions below should also refresh the $scope.pantry and update the view.
-    //
-    // reload scope after each function
-    // also empty the form add after saving
-
-    // $scope.pantry = [
-    //   {
-    //     "item": "name1",
-    //     "stock": 1
-    //   },
-    //   {
-    //     "item": "name2",
-    //     "stock": 2
-    //   }
-    // ];
-
-    // console.log($scope.pantry);
-
-    function fetchPantry(req){
+    // Fetch pantry items from DynamoDB
+    function fetchPantry(){
+      var req = {
+        method: 'POST',
+        url: apiurl,
+        data: {"operation": "list",
+          "tableName": "Pantry",
+          "payload": {
+            "TableName": "Pantry"
+          }
+        }
+      }
       $http(req).then(function(response){
         console.log(response);
         $scope.pantry = response.data.Items;
+        console.log($scope.pantry);
 
+        $cookies.putObject('pantry', $scope.pantry);
       });
     }
 
+    // Add new item in Pantry DynamoDB table.
     $scope.newItem = function() {
       console.log(this.itemname);
       console.log(this.itemstock);
@@ -64,47 +75,102 @@ angular.module('pantryApp', ['xeditable'])
         }
       }
 
+      $scope.newitem = {
+        item: this.itemname,
+        stock: this.itemstock
+      };
+
+      // Reset the form.
+      this.newItemForm.$setPristine();
+      this.newItemForm.$setUntouched();
+      this.itemname = "";
+      this.itemstock = "";
+
       // check for errors, etc.
       $http(req).then(function(response){
-      //   console.log(response);
+        // console.log(response);
         // add the new item directly to the pantry scope (to save api calls)
         // or call fetchPantry again...
+        $scope.pantry.push($scope.newitem);
+        console.log($scope.pantry);
+
+        // Refresh cookie with new item.
+        $cookies.putObject('pantry', $scope.pantry);
       });
     }
 
-     $scope.saveItem = function(olditem, data) {
+    // Update an item in the Pantry table.
+    $scope.saveItem = function(olditem, data, index) {
       console.log(olditem);
       console.log(data);
 
-      var req = {
-        method: 'POST',
-        url: apiurl,
-        data: {
-          "operation": "update",
-          "tableName": "Pantry",
-          "payload": {
-            "Key": {
-                "item": olditem.item
-            },
-            "UpdateExpression": "set item = :i, stock = :s",
-            "ExpressionAttributeValues": {
-              ":i": data.item,
-              ":s": data.stock
+      // Cannot update a key attribute (item) so need to approach differently:
+      // delete old item and reinsert.
+      if (olditem.item != data.item) {
+        $scope.removeItem(olditem.item, index);
+
+        var req = {
+          method: 'POST',
+          url: apiurl,
+          data: {
+            "operation": "create",
+            "tableName": "Pantry",
+            "payload": {
+              "Item": {
+                  "item": data.item,
+                  "stock": data.stock
+              }
             }
           }
         }
-      }
 
-       // check for errors, etc.
-      $http(req).then(function(response){
-        console.log(response);
-        // update item in $scope.pantry
-        // or call fetchPantry again...
-      });
+        // check for errors, etc.
+        $http(req).then(function(response){
+          // console.log(response);
+          // add the new item directly to the pantry scope (to save api calls)
+          // or call fetchPantry again...
+          $scope.pantry.push(data);
+          console.log($scope.pantry);
+
+          // Refresh cookie with new item.
+          $cookies.putObject('pantry', $scope.pantry);
+        });
+
+      }
+      else {
+        var req = {
+          method: 'POST',
+          url: apiurl,
+          data: {
+            "operation": "update",
+            "tableName": "Pantry",
+            "payload": {
+              "Key": {
+                "item": olditem.item
+              },
+              "UpdateExpression": "set stock = :s",
+              "ExpressionAttributeValues": {
+                ":s": data.stock
+              }
+            }
+          }
+        }
+
+        // Refresh $scope.pantry and cookie.
+        $scope.pantry[index].item = data.item;
+        $scope.pantry[index].stock = data.stock;
+        $cookies.putObject('pantry', $scope.pantry);
+
+        // check for errors, etc.
+        $http(req).then(function(response){
+          console.log(response);
+        });
+      }
 
      }
 
-    $scope.removeItem = function(data) {
+    // Delete an item from the Pantry table.
+    $scope.removeItem = function(data, index) {
       console.log(data);
 
       var req = {
@@ -121,18 +187,21 @@ angular.module('pantryApp', ['xeditable'])
         }
       }
 
+      // Refresh $scope.pantry
+      // ideally move these things in the 'success' from $http
+      $scope.pantry.splice(index, 1);
+      $cookies.putObject('pantry', $scope.pantry);
+
        // check for errors, etc.
       $http(req).then(function(response){
         // console.log(response);
-        // remove item from $scope.pantry
-        // or call fetchPantry again...
       });
     }
 
-
+    // Reload the page after clicking the refresh button.
     $scope.reload = function() {
+      $cookies.remove('pantry');
       location.reload();
     }
-
 
   });
